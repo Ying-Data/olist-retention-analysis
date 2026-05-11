@@ -168,7 +168,7 @@ Every data treatment decision is documented — an interviewer will ask "how did
 
 - **Retention rate denominator:** All unique `customer_unique_id` values with ≥1 fully delivered order (93.358 customers)
 - **Revenue definition:** `payment_value` sum (product price + freight). Product-only revenue = R$ 13,2M (matches Excel report)
-- **Number format: ** Dutch locale — . is the thousands separator, , is the decimal (e.g. R$ 159,86 · R$ 15.421.083).
+- **Number format:** Dutch locale — . is the thousands separator, , is the decimal (e.g. R$ 159,86 · R$ 15.421.083).
 - **Repeat buyer definition:** `customer_unique_id` appears in 2+ distinct delivered orders
 - **All figures** calculated from raw data. No estimates, no invented ranges. Every number in every file is consistent.
 
