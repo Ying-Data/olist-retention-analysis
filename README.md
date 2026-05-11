@@ -43,8 +43,6 @@ Olist operates as a **pure customer-acquisition engine** with no retention flywh
 | `olist_powerbi_export.csv` | 96.470 rows × 25 columns — pre-processed, locale-safe, ML probability included |
 | `olist_boss_report.xlsx` | Multi-tab Excel report (consulting style): Executive Summary, Revenue & Growth, Product Categories, Geography, Delivery Performance |
 | `olist_executive_report.html` | 3-page A4 print-ready executive report with ROI model |
-| `olist_powerbi_tutorial.html` | Step-by-step Power BI guide (Dutch locale warnings, DAX measures, visual specs) |
-| `olist_github_guide.html` | Beginner-proof GitHub publishing guide (all error messages covered) |
 | `README.md` | This file |
 
 ---
