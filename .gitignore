@@ -1,13 +1,33 @@
-# Raw data files (too large; Kaggle terms of service)
+# Raw Kaggle source files (download from the dataset link in the README).
+# All CSVs are ignored, then the processed exports are re-included explicitly.
 *.csv
-!olist_powerbi_export.csv
-!feature_importance.csv
+!data/olist_powerbi_export.csv
+!data/feature_importance.csv
 
-# Python cache
+# Python cache and bytecode
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 
-# System files
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS metadata
 .DS_Store
-Thumbs.db 
+Thumbs.db
+desktop.ini
+
+# Editors / IDEs
+.vscode/
+.idea/
+
+# Excel lock files
+~$*.xlsx
+~$*.xls

@@ -1,44 +1,43 @@
 """
 =============================================================================
-OLIST BRAZILIAN E-COMMERCE  ·  CUSTOMER RETENTION ANALYSIS PIPELINE
+OLIST BRAZILIAN E-COMMERCE, CUSTOMER RETENTION ANALYSIS PIPELINE
 =============================================================================
-Author  : Ying  |  Role: Data Analyst
+Author  : Ying Zhao, Data Analyst
 Dataset : Olist Public E-Commerce Dataset (Kaggle / olistbr)
-Period  : September 2016 – October 2018  |  9 CSV files, ~100K orders
-Purpose : Portfolio project — demonstrate end-to-end analytical capability
+Period  : September 2016 to October 2018, 9 CSV files, about 100K orders
+Purpose : Portfolio project demonstrating end-to-end analytical capability
 
 BUSINESS PROBLEM
 ----------------
-97% of Olist customers buy exactly once and never return. Olist is operating
-as a customer-acquisition machine with no retention engine. Every BRL spent
-on acquisition is wasted if customers do not come back.
+97% of Olist customers buy exactly once and never return. The platform runs
+as a customer-acquisition machine with no retention engine, so every real
+spent on acquisition is wasted when customers do not come back.
 
-THE ONE BUSINESS QUESTION THIS DATA CAN ANSWER FOR THE C-SUITE
----------------------------------------------------------------
-What factors predict whether a customer will return — and what is the
-incremental revenue if we recover even 1 percentage point of repeat rate?
+THE BUSINESS QUESTION THIS DATA CAN ANSWER FOR THE C-SUITE
+----------------------------------------------------------
+Which factors predict whether a customer returns, and what is the incremental
+revenue from recovering even one percentage point of repeat rate?
 
 DELIVERABLES PRODUCED BY THIS SCRIPT
 -------------------------------------
-  1.  olist_powerbi_export.csv   — 96,470 rows, 25 columns (Power BI source)
-  2.  feature_importance.csv     — ranked ML feature importances
-  (The executive HTML report, Power BI tutorial, GitHub guide, and README
-   are separate files delivered alongside this script.)
+  1. data/olist_powerbi_export.csv  : 96.470 rows, 24 columns (Power BI source)
+  2. data/feature_importance.csv    : ranked ML feature importances
+  The executive HTML report, Power BI dashboard, and README are delivered
+  alongside this script.
 
 LOCALE NOTE
 -----------
-This script runs on Windows with a Dutch locale.  All currency values are in
-Brazilian Real (R$).  Decimal separator in Python output is a period (.)
-because Python's float representation is locale-independent.  When opening
-the CSV in Excel on a Dutch machine, use Data > From Text/CSV and set the
-decimal separator to "." (period) to avoid Excel misreading decimals.
+Currency values are Brazilian Real (R$). Python writes decimals with a period
+because its float representation is locale-independent. When opening the CSV
+in Excel or Power BI on a Dutch-locale machine, import with the decimal set to
+period so the figures are read correctly.
 
 USAGE
 -----
   python olist_pipeline.py
 
-  Assumes all 9 CSV files are in the same folder as this script.
-  Outputs are written to the same folder.
+  Place the 9 raw Kaggle CSV files in the same folder as this script.
+  Outputs are written to the data/ subfolder.
 
 =============================================================================
 """
@@ -59,10 +58,12 @@ warnings.filterwarnings("ignore")
 # ─────────────────────────────────────────────────────────────────────────────
 # SECTION 0 · CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
-# Change DATA_DIR to the folder containing your 9 CSV files.
-# If this script is in the same folder as the CSVs, leave it as ".".
+# DATA_DIR holds the 9 raw Kaggle CSV files (the script's own folder by default).
+# OUT_DIR receives the processed exports and is created if it does not exist.
 DATA_DIR  = "."
-OUT_DIR   = "."     # folder for output files
+OUT_DIR   = "data"
+
+os.makedirs(OUT_DIR, exist_ok=True)
 
 
 def path(filename):
@@ -109,7 +110,7 @@ print(f"  cat_trans:{cat_trans.shape[0]:>7,} rows")
 # SECTION 2 · DATA CLEANING
 # Every decision is documented with business rationale.
 # ─────────────────────────────────────────────────────────────────────────────
-print("\n[2/7] Cleaning data — documenting every decision...")
+print("\n[2/7] Cleaning data, documenting every decision...")
 
 # --- 2a. Date parsing ---
 # Dates are stored as strings in DD/MM/YYYY HH:MM format (European).
@@ -155,12 +156,12 @@ delivered["days_vs_estimate"] = (
 # is_late: positive days_vs_estimate means delivered after estimated date
 delivered["is_late"] = (delivered["days_vs_estimate"] > 0).astype(int)
 
-# DATA QUALITY FLAG: 8 rows have NaT for delivery date — both order and
+# DATA QUALITY FLAG: 8 rows have NaT for delivery date, both order and
 # delivery timestamps are missing.  These rows cannot contribute delivery
 # metrics and are excluded from the model (not from EDA counts).
 missing_delivery = delivered["delivery_days"].isna().sum()
 print(f"\n  DATA QUALITY: {missing_delivery} rows missing delivery date "
-      f"(both timestamps absent — not imputable, excluded from model only)")
+      f"(both timestamps absent, not imputable, excluded from model only)")
 
 # DATA QUALITY FLAG: 0 negative delivery days (sanity check passed)
 neg_delivery = (delivered["delivery_days"] < 0).sum()
@@ -217,7 +218,7 @@ rev_agg = reviews.groupby("order_id").agg(
 missing_reviews = delivered["order_id"].shape[0] - delivered["order_id"].isin(
     rev_agg["order_id"]).sum()
 print(f"  DATA QUALITY: {missing_reviews:,} orders have no review "
-      f"(imputed as 3.0 — neutral)")
+      f"(imputed as 3.0, neutral)")
 
 # --- 2g. Product category (top-value item per order) ---
 items_cat = (
@@ -261,7 +262,7 @@ print(f"\n  Master frame: {df.shape[0]:,} rows × {df.shape[1]} columns")
 # ─────────────────────────────────────────────────────────────────────────────
 # SECTION 3 · TARGET VARIABLE
 # ─────────────────────────────────────────────────────────────────────────────
-print("\n[3/7] Defining target variable — is_repeat_buyer...")
+print("\n[3/7] Defining target variable: is_repeat_buyer...")
 
 # METHODOLOGY: Repeat buyer = customer_unique_id appears in 2+ delivered orders.
 # customer_unique_id (not customer_id) is used because the dataset documentation
@@ -283,7 +284,7 @@ print(f"  Total unique customers (denominator): {total_unique_customers:,}")
 print(f"  One-time buyers: {one_time:,}  ({one_time/total_unique_customers*100:.1f}%)")
 print(f"  Repeat buyers:   {repeat_n:,}  ({repeat_pct:.1f}%)")
 print()
-print(f"  *** HEADLINE FINDING: 97% of customers never return ***")
+print(f"  *** HEADLINE FINDING: {one_time/total_unique_customers*100:.0f}% of customers never return ***")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -308,8 +309,8 @@ print(f"  Late delivery rate:       {late_rate*100:.1f}%")
 # -- Review scores split by late/on-time
 late_rev_score    = df[df["is_late"] == 1]["review_score"].mean()
 ontime_rev_score  = df[df["is_late"] == 0]["review_score"].mean()
-print(f"  Avg review — late orders:    {late_rev_score:.2f} ★")
-print(f"  Avg review — on-time orders: {ontime_rev_score:.2f} ★")
+print(f"  Avg review, late orders:    {late_rev_score:.2f} stars")
+print(f"  Avg review, on-time orders: {ontime_rev_score:.2f} stars")
 print(f"  *** Late delivery drops review score by "
       f"{ontime_rev_score - late_rev_score:.2f} stars ***")
 
@@ -334,7 +335,7 @@ for state, cnt in top_states.items():
 # ─────────────────────────────────────────────────────────────────────────────
 # SECTION 5 · MACHINE LEARNING  ·  Predict Repeat Purchase
 # ─────────────────────────────────────────────────────────────────────────────
-print("\n[5/7] Machine Learning — Random Forest classifier...")
+print("\n[5/7] Machine Learning: Random Forest classifier...")
 print("  Target: is_repeat_buyer (1 = returned for a 2nd+ order)")
 print("  Class imbalance handled via class_weight='balanced'")
 
@@ -343,7 +344,7 @@ df_model = df[df["delivery_days"].notna()].copy()
 df_model["review_score"]   = df_model["review_score"].fillna(3.0)
 df_model["has_comment"]    = df_model["has_comment"].fillna(0)
 
-# Cap freight_ratio at 99th percentile — extreme outliers from near-zero
+# Cap freight_ratio at 99th percentile, extreme outliers from near-zero
 # product prices cause ratio > 100, which would dominate the model.
 p99 = df_model["freight_ratio"].quantile(0.99)
 df_model["freight_ratio_capped"] = df_model["freight_ratio"].clip(upper=p99)
@@ -413,7 +414,7 @@ for _, row in fi.head(10).iterrows():
     print(f"    {row['feature']:<30} {row['importance']:.4f}  {bar}")
 
 fi.to_csv(out("feature_importance.csv"), index=False)
-print(f"\n  Saved: feature_importance.csv")
+print(f"\n  Saved: data/feature_importance.csv")
 
 # -- Attach predicted probability back to model frame
 df_model["repeat_purchase_probability"] = rf.predict_proba(X)[:, 1]
@@ -431,7 +432,7 @@ print("\n[6/7] ROI scenario model...")
 print("  Assumptions:")
 print(f"    Avg order value:            R$ {avg_order_value:.2f}  (from actual data)")
 print(f"    Avg orders per repeat cust: {purchase_counts[purchase_counts>=2].mean():.2f}  (from actual data)")
-print(f"    Cost-per-acquisition:       R$ 40.00  (assumption — adjust in Excel)")
+print(f"    Cost-per-acquisition:       R$ 40.00  (assumption, adjust in Excel)")
 print()
 print("  SCENARIO TABLE")
 print(f"  {'Target Rate':>12}  {'Extra Repeat Custs':>20}  "
@@ -461,14 +462,14 @@ print("  NOTE: 'Additional Revenue' = extra_customers × avg_order_value × (ext
 # ─────────────────────────────────────────────────────────────────────────────
 print("\n[7/7] Exporting Power BI CSV...")
 
+# 24 columns, matching data/olist_powerbi_export.csv exactly.
 pbi_cols = [
-    "order_id", "customer_id", "customer_unique_id", "customer_state", "customer_city",
+    "order_id", "customer_id", "customer_unique_id", "customer_state",
     "order_purchase_timestamp", "order_delivered_customer_date",
     "order_estimated_delivery_date",
     "delivery_days", "days_vs_estimate", "is_late",
     "review_score", "has_comment",
-    "total_payment", "payment_installments", "used_credit_card",
-    "used_boleto", "used_voucher",
+    "total_payment", "payment_installments", "used_credit_card", "used_boleto",
     "n_items", "product_revenue", "freight_value", "freight_ratio_capped",
     "top_category", "seller_state",
     "is_repeat_buyer", "repeat_purchase_probability",
@@ -491,14 +492,14 @@ pbi_out["order_estimated_delivery_date"]  = pd.to_datetime(
 
 pbi_out.to_csv(out("olist_powerbi_export.csv"), index=False)
 
-print(f"  Saved: olist_powerbi_export.csv  ({len(pbi_out):,} rows, {len(pbi_cols)} columns)")
+print(f"  Saved: data/olist_powerbi_export.csv  ({len(pbi_out):,} rows, {len(pbi_cols)} columns)")
 print()
 print("  POWER BI IMPORT NOTE:")
 print("  When importing this CSV on a Dutch-locale Windows machine:")
-print("  1. In Power BI: Home → Get Data → Text/CSV")
+print("  1. In Power BI: Home > Get Data > Text/CSV")
 print("  2. In the preview dialog, click 'Transform Data'")
-print("  3. Select all numeric columns → Transform → Data Type →")
-print("     'Using Locale...' → choose 'English (United States)'")
+print("  3. Select all numeric columns > Transform > Data Type >")
+print("     'Using Locale...' then choose 'English (United States)'")
 print("  4. This prevents Dutch Power Query from interpreting '.' as")
 print("     a thousands separator instead of a decimal separator.")
 
@@ -508,20 +509,20 @@ print("     a thousands separator instead of a decimal separator.")
 # ─────────────────────────────────────────────────────────────────────────────
 print()
 print("=" * 70)
-print("PIPELINE COMPLETE — KEY FIGURES (use these in all deliverables)")
+print("PIPELINE COMPLETE: KEY FIGURES (use these in all deliverables)")
 print("=" * 70)
 print(f"  Total delivered orders:   {len(df):>10,}")
 print(f"  Total unique customers:   {total_unique_customers:>10,}")
-print(f"  One-time buyers:          {one_time:>10,}  (97.0%)")
-print(f"  Repeat buyers:            {repeat_n:>10,}  ( 3.0%)")
+print(f"  One-time buyers:          {one_time:>10,}  ({one_time/total_unique_customers*100:.1f}%)")
+print(f"  Repeat buyers:            {repeat_n:>10,}  ({repeat_pct:.1f}%)")
 print(f"  Total payment revenue:    R$ {total_rev:>12,.2f}")
 print(f"  Avg order value:          R$ {avg_order_value:>12,.2f}")
 print(f"  Avg delivery days:        {avg_delivery_days:>10.1f}")
 print(f"  Late delivery rate:       {late_rate*100:>10.1f}%")
-print(f"  Avg review score:         {df['review_score'].mean():>10.2f} ★")
+print(f"  Avg review score:         {df['review_score'].mean():>10.2f} stars")
 print(f"  ML ROC-AUC:               {auc:>10.4f}")
 print()
 print("  Output files written:")
-print("    ✓  olist_powerbi_export.csv")
-print("    ✓  feature_importance.csv")
+print("    - data/olist_powerbi_export.csv")
+print("    - data/feature_importance.csv")
 print("=" * 70)
