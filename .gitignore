@@ -1,8 +1,16 @@
+# Secrets and environment
+.env
+.env.*
+
 # Raw Kaggle source files (download from the dataset link in the README).
 # All CSVs are ignored, then the processed exports are re-included explicitly.
 *.csv
 !data/olist_powerbi_export.csv
 !data/feature_importance.csv
+
+# Spreadsheets are ignored, except the delivered executive workbook.
+*.xlsx
+!output/olist_executive_workbook.xlsx
 
 # Python cache and bytecode
 __pycache__/
@@ -27,6 +35,12 @@ desktop.ini
 # Editors / IDEs
 .vscode/
 .idea/
+
+# Logs
+*.log
+
+# Node (for any tooling that pulls it in)
+node_modules/
 
 # Excel lock files
 ~$*.xlsx
