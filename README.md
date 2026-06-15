@@ -18,7 +18,7 @@ A full-stack data analytics project on the Olist Brazilian e-commerce dataset (K
 | Review score, on-time orders | 4,27 stars |
 | ML model ROC-AUC | 0,61 |
 
-> **The business case:** moving the repeat rate from 3% to 6%, still far below any e-commerce benchmark, generates **+R$ 498.000 in incremental annual revenue** at an assumed retention cost of R$ 40 per customer (net ROI: +R$ 386.000).
+> **The business case:** moving the repeat rate from 3% to 6%, still far below any e-commerce benchmark, is a modelled opportunity of **+R$ 498.000 in incremental revenue** at an assumed retention cost of R$ 40 per customer (net ROI: +R$ 386.000). It is a sizing estimate to scope the retention spend, not a booked result, and every assumption is shown.
 
 ## Business problem
 
@@ -175,11 +175,12 @@ Source: [Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce). L
 
 ## About
 
-**Ying Zhao**, Data Analyst, Antwerp, Belgium.
-Tools: Python (pandas, scikit-learn), Power BI, Excel, Git.
+**Ying Zhao**, BI &amp; Data Analyst for commercial and supply-chain teams. Antwerp on-site, Belgium remote.
 
-End-to-end analytical work, from raw CSVs to executive recommendations with quantified ROI.
+Eight years on the commercial side (a EUR 2M client book at 95% retention) before I built the analytics, so I read data the way an owner reads a P&L: start from the decision, then build the SQL and the model that move it.
 
-- LinkedIn: [weiying-zhao](https://linkedin.com/in/weiying-zhao)
+Tools: Python (pandas, scikit-learn), SQL, Power BI, Excel, Git.
+
+- Portfolio: [ying-data.github.io/portfolio](https://ying-data.github.io/portfolio/)
+- LinkedIn: [weiying-zhao](https://www.linkedin.com/in/weiying-zhao/)
 - Email: [weiying.data@gmail.com](mailto:weiying.data@gmail.com)
-- GitHub: [Ying-Data](https://github.com/Ying-Data)
