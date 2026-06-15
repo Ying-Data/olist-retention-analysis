@@ -18,11 +18,11 @@ A full-stack data analytics project on the Olist Brazilian e-commerce dataset (K
 | Review score, on-time orders | 4,27 stars |
 | ML model ROC-AUC | 0,61 |
 
-> **The business case:** moving the repeat rate from 3% to 6%, still far below any e-commerce benchmark, is a modelled opportunity of **+R$ 498.000 in incremental revenue** at an assumed retention cost of R$ 40 per customer (net ROI: +R$ 386.000). It is a sizing estimate to scope the retention spend, not a booked result, and every assumption is shown.
+> **The business case:** moving the repeat rate from 3% to 6% is a modelled opportunity of **+R$ 498.000 in incremental revenue** at an assumed retention cost of R$ 40 per customer (net ROI: +R$ 386.000). It is a sizing estimate to scope the retention spend, not a booked result, and every assumption is shown.
 
 ## Business problem
 
-Olist runs as a customer-acquisition engine with no retention flywheel. Every real spent attracting a customer buys one order, and then the customer disappears. The platform has:
+Olist runs as a customer-acquisition engine with no retention mechanism. Every acquisition spend buys a single order, and then the customer disappears. The platform has:
 
 - No structural loyalty programme
 - No post-purchase re-engagement workflow

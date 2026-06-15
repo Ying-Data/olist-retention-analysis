@@ -11,7 +11,7 @@ BUSINESS PROBLEM
 ----------------
 97% of Olist customers buy exactly once and never return. The platform runs
 as a customer-acquisition machine with no retention engine, so every real
-spent on acquisition is wasted when customers do not come back.
+(R$) spent on acquisition is wasted when customers do not come back.
 
 THE BUSINESS QUESTION THIS DATA CAN ANSWER FOR THE C-SUITE
 ----------------------------------------------------------
@@ -311,8 +311,8 @@ late_rev_score    = df[df["is_late"] == 1]["review_score"].mean()
 ontime_rev_score  = df[df["is_late"] == 0]["review_score"].mean()
 print(f"  Avg review, late orders:    {late_rev_score:.2f} stars")
 print(f"  Avg review, on-time orders: {ontime_rev_score:.2f} stars")
-print(f"  *** Late delivery drops review score by "
-      f"{ontime_rev_score - late_rev_score:.2f} stars ***")
+print(f"  Late delivery review gap: {ontime_rev_score:.2f} on-time vs "
+      f"{late_rev_score:.2f} late = {ontime_rev_score - late_rev_score:.2f} stars")
 
 # -- Top 5 categories by revenue
 df_cat_rev = (
